@@ -2,13 +2,13 @@ extends Control
 
 
 const STRIKE: CardData = preload("res://content/cards/strike.tres")
-const STARTER_DECK_SIZE: int = 10
+const DEFEND: CardData = preload("res://content/cards/defend.tres")
 
 @onready var _controller: BattleController = $BattleController
 @onready var _player_view: CharacterView = $Stage/PlayerView
 @onready var _enemy_view: CharacterView = $Stage/EnemyView
 @onready var _end_turn_button: Button = $EndTurnButton
-@onready var _hand_view: HandView = $HandView
+@onready var _hand_ui: HandUI = $HandUI
 @onready var _deck_count_label: Label = $DeckCount
 @onready var _discard_count_label: Label = $DiscardCount
 
@@ -29,11 +29,13 @@ func _ready() -> void:
 	_enemy_view.label_text = "Placeholder Enemy"
 	_enemy_view.bind(_enemy, _controller.events)
 
+	_hand_ui.bind(_state, _player_view, [_enemy_view] as Array[CharacterView])
+
 	_hand_subscription = _controller.events.subscribe(HandChangedEvent, _on_hand_changed, 0)
 	_end_turn_button.pressed.connect(_on_end_turn_pressed)
 
 	_controller.run_battle.call()
-	_hand_view.render(_state.hand)
+	_hand_ui.render(_state.hand)
 	_refresh_pile_counts()
 
 
@@ -60,7 +62,7 @@ func _on_end_turn_pressed() -> void:
 
 
 func _on_hand_changed(_event: BattleEvent) -> void:
-	_hand_view.render.call_deferred(_state.hand)
+	_hand_ui.render.call_deferred(_state.hand)
 	_refresh_pile_counts.call_deferred()
 
 
@@ -71,6 +73,8 @@ func _refresh_pile_counts() -> void:
 
 func _build_starter_deck() -> Array[CardInstance]:
 	var cards: Array[CardInstance] = []
-	for i: int in STARTER_DECK_SIZE:
+	for i: int in 5:
 		cards.append(CardInstance.new(STRIKE))
+	for i: int in 5:
+		cards.append(CardInstance.new(DEFEND))
 	return cards
