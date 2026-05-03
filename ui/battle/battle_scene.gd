@@ -2,20 +2,26 @@ extends Control
 
 
 const STRIKE: CardData = preload("res://content/cards/strike.tres")
+const STARTER_DECK_SIZE: int = 10
 
 @onready var _controller: BattleController = $BattleController
 @onready var _player_view: CharacterView = $Stage/PlayerView
 @onready var _enemy_view: CharacterView = $Stage/EnemyView
-@onready var _strike_button: Button = $DebugBar/StrikeButton
+@onready var _end_turn_button: Button = $EndTurnButton
+@onready var _hand_view: HandView = $HandView
+@onready var _deck_count_label: Label = $DeckCount
+@onready var _discard_count_label: Label = $DiscardCount
 
 var _state: BattleState
 var _enemy: Character
+var _hand_subscription: EventSubscription
 
 
 func _ready() -> void:
 	var player: Character = Character.new(40)
 	_enemy = Character.new(18)
 	_state = BattleState.new(player, [_enemy] as Array[Character], _controller.events)
+	_state.deck = _build_starter_deck()
 	_controller.state = _state
 
 	_player_view.label_text = "Goblin (you)"
@@ -23,14 +29,48 @@ func _ready() -> void:
 	_enemy_view.label_text = "Placeholder Enemy"
 	_enemy_view.bind(_enemy, _controller.events)
 
-	_strike_button.pressed.connect(_on_strike_pressed)
+	_hand_subscription = _controller.events.subscribe(HandChangedEvent, _on_hand_changed, 0)
+	_end_turn_button.pressed.connect(_on_end_turn_pressed)
+
 	_controller.run_battle.call()
+	_hand_view.render(_state.hand)
+	_refresh_pile_counts()
 
 
-func _on_strike_pressed() -> void:
-	if _state == null:
+func _exit_tree() -> void:
+	if _hand_subscription != null:
+		_hand_subscription.release()
+		_hand_subscription = null
+	if _controller != null and is_instance_valid(_controller):
+		_controller.request_battle_end()
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey:
+		var key_event: InputEventKey = event
+		if key_event.pressed and not key_event.echo and key_event.keycode == KEY_SPACE:
+			_on_end_turn_pressed()
+			get_viewport().set_input_as_handled()
+
+
+func _on_end_turn_pressed() -> void:
+	if _controller == null:
 		return
-	if _enemy.current_hp <= 0:
-		return
-	var card: CardInstance = CardInstance.new(STRIKE)
-	card.play(_state, _enemy)
+	_controller.request_end_turn()
+
+
+func _on_hand_changed(_event: BattleEvent) -> void:
+	_hand_view.render.call_deferred(_state.hand)
+	_refresh_pile_counts.call_deferred()
+
+
+func _refresh_pile_counts() -> void:
+	_deck_count_label.text = "Deck: %d" % _state.deck.size()
+	_discard_count_label.text = "Discard: %d" % _state.discard.size()
+
+
+func _build_starter_deck() -> Array[CardInstance]:
+	var cards: Array[CardInstance] = []
+	for i: int in STARTER_DECK_SIZE:
+		cards.append(CardInstance.new(STRIKE))
+	return cards
