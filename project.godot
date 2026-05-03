@@ -11,12 +11,12 @@ config_version=5
 [application]
 
 config/name="Goblins"
+run/main_scene="uid://cvii3mt1lge1a"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
 [debug]
 
-gdscript/warnings/exclude_addons=true
 gdscript/warnings/untyped_declaration=2
 gdscript/warnings/inferred_declaration=2
 gdscript/warnings/unsafe_property_access=2

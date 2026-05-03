@@ -1,0 +1,2 @@
+class_name BattleStartedEvent
+extends BattleEvent

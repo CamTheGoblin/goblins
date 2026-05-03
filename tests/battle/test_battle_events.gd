@@ -1,7 +1,7 @@
 extends GutTest
 
 
-class DamageEvent:
+class FakeDamageEvent:
 	extends BattleEvent
 	var amount: int = 0
 
@@ -54,16 +54,16 @@ func test_earlier_subscriber_mutations_are_visible_to_later_subscribers() -> voi
 
 	var observed: Array[int] = []
 	var doubler: Callable = func(event: BattleEvent) -> void:
-		var dmg: DamageEvent = event
+		var dmg: FakeDamageEvent = event
 		dmg.amount *= 2
 	var observer: Callable = func(event: BattleEvent) -> void:
-		var dmg: DamageEvent = event
+		var dmg: FakeDamageEvent = event
 		observed.append(dmg.amount)
 
-	var _doubler: EventSubscription = bus.subscribe(DamageEvent, doubler, 1)
-	var _observer: EventSubscription = bus.subscribe(DamageEvent, observer, 2)
+	var _doubler: EventSubscription = bus.subscribe(FakeDamageEvent, doubler, 1)
+	var _observer: EventSubscription = bus.subscribe(FakeDamageEvent, observer, 2)
 
-	var event: DamageEvent = DamageEvent.new()
+	var event: FakeDamageEvent = FakeDamageEvent.new()
 	event.amount = 5
 	bus.dispatch(event)
 
@@ -146,13 +146,13 @@ func test_subscriber_only_fires_for_its_registered_event_class() -> void:
 	var turn_ended_listener: Callable = func(_e: BattleEvent) -> void:
 		turn_ended_hits.append(1)
 
-	var _d: EventSubscription = bus.subscribe(DamageEvent, damage_listener, 0)
+	var _d: EventSubscription = bus.subscribe(FakeDamageEvent, damage_listener, 0)
 	var _t: EventSubscription = bus.subscribe(TurnEndedEvent, turn_ended_listener, 0)
 
-	bus.dispatch(DamageEvent.new())
+	bus.dispatch(FakeDamageEvent.new())
 	bus.dispatch(TurnEndedEvent.new())
 
-	assert_eq(damage_hits.size(), 1, "DamageEvent subscriber should fire only for DamageEvent dispatches")
+	assert_eq(damage_hits.size(), 1, "FakeDamageEvent subscriber should fire only for FakeDamageEvent dispatches")
 	assert_eq(turn_ended_hits.size(), 1, "TurnEndedEvent subscriber should fire only for TurnEndedEvent dispatches")
 
 
@@ -163,16 +163,16 @@ func test_non_mutating_subscribers_observe_the_same_payload_as_a_pure_notificati
 	var observed_a: Array[int] = []
 	var observed_b: Array[int] = []
 	var observer_a: Callable = func(e: BattleEvent) -> void:
-		var dmg: DamageEvent = e
+		var dmg: FakeDamageEvent = e
 		observed_a.append(dmg.amount)
 	var observer_b: Callable = func(e: BattleEvent) -> void:
-		var dmg: DamageEvent = e
+		var dmg: FakeDamageEvent = e
 		observed_b.append(dmg.amount)
 
-	var _a: EventSubscription = bus.subscribe(DamageEvent, observer_a, 1)
-	var _b: EventSubscription = bus.subscribe(DamageEvent, observer_b, 2)
+	var _a: EventSubscription = bus.subscribe(FakeDamageEvent, observer_a, 1)
+	var _b: EventSubscription = bus.subscribe(FakeDamageEvent, observer_b, 2)
 
-	var event: DamageEvent = DamageEvent.new()
+	var event: FakeDamageEvent = FakeDamageEvent.new()
 	event.amount = 7
 	bus.dispatch(event)
 
