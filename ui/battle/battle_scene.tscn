@@ -1,0 +1,54 @@
+[gd_scene format=3 uid="uid://cvii3mt1lge1a"]
+
+[ext_resource type="Script" uid="uid://1ldedv020xmp" path="res://ui/battle/battle_scene.gd" id="1_battle_scene"]
+[ext_resource type="Script" uid="uid://cjjxakg20v6sm" path="res://core/battle/battle_controller.gd" id="2_battle_controller"]
+[ext_resource type="PackedScene" uid="uid://cfflio10r24jw" path="res://ui/battle/character_view.tscn" id="3_character_view"]
+
+[node name="BattleScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_battle_scene")
+
+[node name="BattleController" type="Node" parent="."]
+script = ExtResource("2_battle_controller")
+
+[node name="Stage" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 40.0
+offset_top = 40.0
+offset_right = -40.0
+offset_bottom = 200.0
+grow_horizontal = 2
+alignment = 1
+theme_override_constants/separation = 200
+
+[node name="PlayerView" parent="Stage" instance=ExtResource("3_character_view")]
+layout_mode = 2
+
+[node name="EnemyView" parent="Stage" instance=ExtResource("3_character_view")]
+layout_mode = 2
+
+[node name="DebugBar" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -120.0
+offset_top = -80.0
+offset_right = 120.0
+offset_bottom = -32.0
+grow_horizontal = 2
+grow_vertical = 0
+alignment = 1
+
+[node name="StrikeButton" type="Button" parent="DebugBar"]
+layout_mode = 2
+text = "Debug: Play Strike"
