@@ -13,5 +13,6 @@ amount = 6
 script = ExtResource("1_card_data")
 name = "Strike"
 cost = 1
+description = "Deal 6 damage."
 target_type = 0
 effects = Array[Resource]([SubResource("Resource_strike_damage")])

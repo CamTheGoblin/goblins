@@ -1,9 +1,18 @@
-[gd_scene load_steps=4 format=3 uid="uid://cvii3mt1lge1a"]
+[gd_scene load_steps=6 format=3 uid="uid://cvii3mt1lge1a"]
 
 [ext_resource type="Script" uid="uid://1ldedv020xmp" path="res://ui/battle/battle_scene.gd" id="1_battle_scene"]
 [ext_resource type="Script" uid="uid://cjjxakg20v6sm" path="res://core/battle/battle_controller.gd" id="2_battle_controller"]
 [ext_resource type="PackedScene" uid="uid://cfflio10r24jw" path="res://ui/battle/character_view.tscn" id="3_character_view"]
-[ext_resource type="Script" uid="uid://dikhk36w3mptk" path="res://ui/battle/hand_view.gd" id="4_hand_view"]
+[ext_resource type="PackedScene" uid="uid://b4handui0001" path="res://ui/battle/hand_ui.tscn" id="4_hand_ui"]
+[ext_resource type="Script" path="res://core/cards/hand_layout_params.gd" id="5_hand_layout_params"]
+
+[sub_resource type="Resource" id="HandLayoutParams_default"]
+script = ExtResource("5_hand_layout_params")
+arc_radius = 1400.0
+total_fan_angle_deg = 32.0
+hover_lift = 100.0
+hover_scale = 1.18
+neighbor_displacement = 60.0
 
 [node name="BattleScene" type="Control"]
 layout_mode = 3
@@ -78,19 +87,17 @@ grow_vertical = 0
 horizontal_alignment = 2
 text = "Discard: 0"
 
-[node name="HandView" type="HBoxContainer" parent="."]
+[node name="HandUI" parent="." instance=ExtResource("4_hand_ui")]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -440.0
-offset_top = -160.0
-offset_right = 440.0
-offset_bottom = -32.0
+offset_left = 0.0
+offset_top = -200.0
+offset_right = 0.0
+offset_bottom = -200.0
 grow_horizontal = 2
 grow_vertical = 0
-alignment = 1
-theme_override_constants/separation = 12
-script = ExtResource("4_hand_view")
+params = SubResource("HandLayoutParams_default")

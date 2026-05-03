@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://b4handui0001"]
+
+[ext_resource type="Script" path="res://ui/battle/hand_ui.gd" id="1_hand_ui"]
+
+[node name="HandUI" type="Control"]
+mouse_filter = 2
+script = ExtResource("1_hand_ui")

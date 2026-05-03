@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="CardData" format=3 uid="uid://b3defend0001"]
+
+[ext_resource type="Script" uid="uid://dj0q6jkwgu5ar" path="res://core/cards/card_data.gd" id="1_card_data"]
+
+[resource]
+script = ExtResource("1_card_data")
+name = "Defend"
+cost = 1
+description = "Gain 5 shield. (Placeholder until #7.)"
+target_type = 1
+effects = Array[Resource]([])
