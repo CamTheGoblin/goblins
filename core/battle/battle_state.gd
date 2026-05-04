@@ -13,6 +13,9 @@ var hand: Array[CardInstance] = []
 var discard: Array[CardInstance] = []
 var exhaust: Array[CardInstance] = []
 
+var energy_current: int = 3
+var energy_max: int = 3
+
 var rng: RandomNumberGenerator = RandomNumberGenerator.new()
 
 
@@ -49,6 +52,16 @@ func discard_hand() -> void:
 
 func _notify_hand_changed() -> void:
 	events.dispatch(HandChangedEvent.new())
+
+
+func spend_energy(amount: int) -> void:
+	energy_current -= amount
+	events.dispatch(EnergyChangedEvent.new())
+
+
+func refresh_energy() -> void:
+	energy_current = energy_max
+	events.dispatch(EnergyChangedEvent.new())
 
 
 func draw(count: int) -> void:

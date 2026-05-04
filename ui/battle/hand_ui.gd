@@ -16,6 +16,7 @@ const DRAG_THRESHOLD_PX: float = 6.0
 var _state: BattleState
 var _enemy_views: Array[CharacterView] = []
 var _player_view: CharacterView
+var _energy_subscription: EventSubscription
 
 var _card_views: Array[CardView] = []
 var _hovered_index: int = -1
@@ -39,6 +40,19 @@ func bind(state: BattleState, player_view: CharacterView, enemy_views: Array[Cha
 	_state = state
 	_player_view = player_view
 	_enemy_views = enemy_views
+	if _energy_subscription != null:
+		_energy_subscription.release()
+	_energy_subscription = _state.events.subscribe(EnergyChangedEvent, _on_energy_changed, 0)
+
+
+func _exit_tree() -> void:
+	if _energy_subscription != null:
+		_energy_subscription.release()
+		_energy_subscription = null
+
+
+func _on_energy_changed(_event: BattleEvent) -> void:
+	_refresh_affordability()
 
 
 func render(hand: Array[CardInstance]) -> void:
@@ -59,6 +73,14 @@ func render(hand: Array[CardInstance]) -> void:
 		add_child(view)
 		_card_views.append(view)
 	_apply_layout(false)
+	_refresh_affordability()
+
+
+func _refresh_affordability() -> void:
+	if _state == null:
+		return
+	for view: CardView in _card_views:
+		view.set_affordable(_can_afford(view.card_instance))
 
 
 func _apply_layout(animate: bool) -> void:
@@ -146,27 +168,36 @@ func _resolve_release(release_global_position: Vector2) -> void:
 		_apply_layout(true)
 		return
 	var played: bool = false
-	if _drag_is_targeted:
-		var enemy: Character = _enemy_under(release_global_position)
-		if enemy != null:
-			_commit_play(dragged_view.card_instance, enemy)
-			played = true
-	else:
-		var card_top_global: float = dragged_view.global_position.y
-		var threshold_global_y: float = global_position.y + nontargeted_play_threshold_offset_y
-		if card_top_global <= threshold_global_y and _state != null:
-			_commit_play(dragged_view.card_instance, _state.player)
-			played = true
+	if _can_afford(dragged_view.card_instance):
+		if _drag_is_targeted:
+			var enemy: Character = _enemy_under(release_global_position)
+			if enemy != null:
+				_commit_play(dragged_view.card_instance, enemy)
+				played = true
+		else:
+			var card_top_global: float = dragged_view.global_position.y
+			var threshold_global_y: float = global_position.y + nontargeted_play_threshold_offset_y
+			if card_top_global <= threshold_global_y and _state != null:
+				_commit_play(dragged_view.card_instance, _state.player)
+				played = true
 	if played:
 		return
 	_dragged_index = -1
 	_apply_layout(true)
 
 
+func _can_afford(card_instance: CardInstance) -> bool:
+	if _state == null or card_instance == null:
+		return false
+	return card_instance.can_play(_state)
+
+
 func _commit_play(card_instance: CardInstance, target: Character) -> void:
 	if _state == null:
 		return
+	var cost: int = card_instance.data.cost
 	card_instance.play(_state, target)
+	_state.spend_energy(cost)
 	_state.discard_from_hand(card_instance)
 	card_play_committed.emit(card_instance, target)
 
