@@ -7,6 +7,8 @@ signal hover_exited_card(card_view: CardView)
 signal pressed_card(card_view: CardView, mouse_global_position: Vector2)
 
 const CARD_SIZE: Vector2 = Vector2(140, 200)
+const AFFORDABLE_MODULATE: Color = Color(1.0, 1.0, 1.0, 1.0)
+const UNAFFORDABLE_MODULATE: Color = Color(1.0, 0.55, 0.55, 0.7)
 
 var card_instance: CardInstance
 
@@ -47,6 +49,10 @@ func snap_to_position(top_left: Vector2) -> void:
 
 func center_position() -> Vector2:
 	return position + pivot_offset
+
+
+func set_affordable(affordable: bool) -> void:
+	modulate = AFFORDABLE_MODULATE if affordable else UNAFFORDABLE_MODULATE
 
 
 func _refresh() -> void:

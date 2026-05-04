@@ -93,6 +93,25 @@ func test_multi_turn_cycling_drives_deck_through_hand_discard_and_reshuffle() ->
 	await wait_physics_frames(1)
 
 
+func test_run_battle_refreshes_energy_at_the_start_of_each_player_turn() -> void:
+	var controller: BattleController = _make_controller_with_battle()
+	_seed_deck(controller, 12)
+
+	controller.run_battle.call()
+	controller.state.spend_energy(2)
+	var mid_turn_energy: int = controller.state.energy_current
+	assert_eq(mid_turn_energy, 1, "spending 2 mid-turn should leave 1 energy before next refresh")
+
+	controller.request_end_turn()
+	await wait_physics_frames(1)
+
+	var refreshed_energy: int = controller.state.energy_current
+	assert_eq(refreshed_energy, controller.state.energy_max, "the next player turn should start at full energy")
+
+	controller.request_battle_end()
+	await wait_physics_frames(1)
+
+
 func test_request_battle_end_resumes_run_battle_and_dispatches_battle_ended() -> void:
 	var controller: BattleController = _make_controller_with_battle()
 

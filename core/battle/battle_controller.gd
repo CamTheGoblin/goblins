@@ -22,6 +22,7 @@ func _init() -> void:
 func run_battle() -> void:
 	events.dispatch(BattleStartedEvent.new())
 	while not _battle_end_pending:
+		state.refresh_energy()
 		state.draw(STARTING_HAND_SIZE)
 		await end_turn_requested
 		state.discard_hand()

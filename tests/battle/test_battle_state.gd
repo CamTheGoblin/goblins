@@ -197,6 +197,33 @@ func test_discard_hand_moves_every_remaining_hand_card_to_discard_in_order() -> 
 	assert_eq(battle.discard, [first, second, third] as Array[CardInstance], "all cards should land on discard preserving hand order")
 
 
+func _watch_energy_changes(battle: BattleState) -> Array[BattleEvent]:
+	var received: Array[BattleEvent] = []
+	var listener: Callable = func(event: BattleEvent) -> void:
+		received.append(event)
+	var _sub: EventSubscription = battle.events.subscribe(EnergyChangedEvent, listener, 0)
+	return received
+
+
+func test_spend_energy_dispatches_an_energy_changed_event() -> void:
+	var battle: BattleState = _make_battle()
+	var observed: Array[BattleEvent] = _watch_energy_changes(battle)
+
+	battle.spend_energy(1)
+
+	assert_eq(observed.size(), 1, "spending energy should dispatch exactly one EnergyChangedEvent")
+
+
+func test_refresh_energy_dispatches_an_energy_changed_event() -> void:
+	var battle: BattleState = _make_battle()
+	battle.spend_energy(2)
+	var observed: Array[BattleEvent] = _watch_energy_changes(battle)
+
+	battle.refresh_energy()
+
+	assert_eq(observed.size(), 1, "refreshing energy should dispatch exactly one EnergyChangedEvent")
+
+
 func _watch_hand_changes(battle: BattleState) -> Array[BattleEvent]:
 	var received: Array[BattleEvent] = []
 	var listener: Callable = func(event: BattleEvent) -> void:
@@ -235,6 +262,35 @@ func test_exhaust_from_hand_dispatches_a_hand_changed_event() -> void:
 	battle.exhaust_from_hand(card)
 
 	assert_eq(observed.size(), 1, "exhausting from hand should dispatch a HandChangedEvent")
+
+
+func test_battle_state_starts_with_three_energy_out_of_three() -> void:
+	var battle: BattleState = _make_battle()
+
+	var current: int = battle.energy_current
+	var maximum: int = battle.energy_max
+	assert_eq(current, 3, "energy_current should start at the 3-energy turn budget")
+	assert_eq(maximum, 3, "energy_max should start at 3 (no carry-over budget)")
+
+
+func test_spend_energy_subtracts_amount_from_energy_current() -> void:
+	var battle: BattleState = _make_battle()
+
+	battle.spend_energy(2)
+
+	var current: int = battle.energy_current
+	assert_eq(current, 1, "spending 2 of 3 energy should leave 1")
+
+
+func test_refresh_energy_restores_energy_current_to_energy_max() -> void:
+	var battle: BattleState = _make_battle()
+	battle.spend_energy(3)
+
+	battle.refresh_energy()
+
+	var current: int = battle.energy_current
+	var maximum: int = battle.energy_max
+	assert_eq(current, maximum, "refresh should fill energy_current back to energy_max")
 
 
 func test_discard_hand_dispatches_a_single_hand_changed_event_for_the_whole_batch() -> void:

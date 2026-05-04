@@ -42,6 +42,34 @@ func test_play_invokes_each_effect_apply_with_battle_player_and_target() -> void
 	assert_same(second.last_target, enemy, "every effect should see the played-against target")
 
 
+func test_can_play_is_true_when_card_cost_equals_current_energy() -> void:
+	var player: Character = Character.new(40)
+	var enemy: Character = Character.new(18)
+	var battle: BattleState = _make_battle(player, [enemy] as Array[Character])
+	battle.spend_energy(2)
+
+	var data: CardData = CardData.new()
+	data.cost = 1
+	var card: CardInstance = CardInstance.new(data)
+
+	var result: bool = card.can_play(battle)
+	assert_true(result, "a 1-cost card with exactly 1 energy remaining should be playable")
+
+
+func test_can_play_is_false_when_card_cost_exceeds_current_energy() -> void:
+	var player: Character = Character.new(40)
+	var enemy: Character = Character.new(18)
+	var battle: BattleState = _make_battle(player, [enemy] as Array[Character])
+	battle.spend_energy(2)
+
+	var data: CardData = CardData.new()
+	data.cost = 2
+	var card: CardInstance = CardInstance.new(data)
+
+	var result: bool = card.can_play(battle)
+	assert_false(result, "a 2-cost card should not be playable when only 1 energy remains")
+
+
 func test_play_strike_drops_enemy_hp_through_the_full_pipeline() -> void:
 	var player: Character = Character.new(40)
 	var enemy: Character = Character.new(18)

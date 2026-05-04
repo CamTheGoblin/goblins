@@ -1,12 +1,11 @@
 [gd_resource type="Resource" script_class="CardData" format=3 uid="uid://b3strike0001"]
 
+[ext_resource type="Script" uid="uid://c0fk03a0hxoo0" path="res://core/effects/card_effect.gd" id="1_7mg6n"]
 [ext_resource type="Script" uid="uid://dj0q6jkwgu5ar" path="res://core/cards/card_data.gd" id="1_card_data"]
 [ext_resource type="Script" uid="uid://bwmuqgefbptdl" path="res://core/effects/damage_effect.gd" id="2_damage_effect"]
 
 [sub_resource type="Resource" id="Resource_strike_damage"]
 script = ExtResource("2_damage_effect")
-affects = 0
-trigger = 0
 amount = 6
 
 [resource]
@@ -15,4 +14,4 @@ name = "Strike"
 cost = 1
 description = "Deal 6 damage."
 target_type = 0
-effects = Array[Resource]([SubResource("Resource_strike_damage")])
+effects = Array[ExtResource("1_7mg6n")]([SubResource("Resource_strike_damage")])

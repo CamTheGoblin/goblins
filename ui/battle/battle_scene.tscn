@@ -1,20 +1,20 @@
-[gd_scene load_steps=6 format=3 uid="uid://cvii3mt1lge1a"]
+[gd_scene format=3 uid="uid://cvii3mt1lge1a"]
 
 [ext_resource type="Script" uid="uid://1ldedv020xmp" path="res://ui/battle/battle_scene.gd" id="1_battle_scene"]
 [ext_resource type="Script" uid="uid://cjjxakg20v6sm" path="res://core/battle/battle_controller.gd" id="2_battle_controller"]
 [ext_resource type="PackedScene" uid="uid://cfflio10r24jw" path="res://ui/battle/character_view.tscn" id="3_character_view"]
-[ext_resource type="PackedScene" uid="uid://b4handui0001" path="res://ui/battle/hand_ui.tscn" id="4_hand_ui"]
-[ext_resource type="Script" path="res://core/cards/hand_layout_params.gd" id="5_hand_layout_params"]
+[ext_resource type="PackedScene" path="res://ui/battle/hand_ui.tscn" id="4_hand_ui"]
+[ext_resource type="Script" uid="uid://vfng1fj5cfpc" path="res://core/cards/hand_layout_params.gd" id="5_hand_layout_params"]
+[ext_resource type="PackedScene" path="res://ui/battle/energy_orb.tscn" id="6_energy_orb"]
 
 [sub_resource type="Resource" id="HandLayoutParams_default"]
 script = ExtResource("5_hand_layout_params")
 arc_radius = 1400.0
 total_fan_angle_deg = 32.0
 hover_lift = 100.0
-hover_scale = 1.18
 neighbor_displacement = 60.0
 
-[node name="BattleScene" type="Control"]
+[node name="BattleScene" type="Control" unique_id=888749942]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -23,10 +23,10 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_battle_scene")
 
-[node name="BattleController" type="Node" parent="."]
+[node name="BattleController" type="Node" parent="." unique_id=1298925719]
 script = ExtResource("2_battle_controller")
 
-[node name="Stage" type="HBoxContainer" parent="."]
+[node name="Stage" type="HBoxContainer" parent="." unique_id=315418188]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -35,16 +35,16 @@ offset_top = 40.0
 offset_right = -40.0
 offset_bottom = 200.0
 grow_horizontal = 2
-alignment = 1
 theme_override_constants/separation = 200
+alignment = 1
 
-[node name="PlayerView" parent="Stage" instance=ExtResource("3_character_view")]
+[node name="PlayerView" parent="Stage" unique_id=2114949298 instance=ExtResource("3_character_view")]
 layout_mode = 2
 
-[node name="EnemyView" parent="Stage" instance=ExtResource("3_character_view")]
+[node name="EnemyView" parent="Stage" unique_id=149560493 instance=ExtResource("3_character_view")]
 layout_mode = 2
 
-[node name="EndTurnButton" type="Button" parent="."]
+[node name="EndTurnButton" type="Button" parent="." unique_id=908655730]
 layout_mode = 1
 anchors_preset = 6
 anchor_left = 1.0
@@ -59,7 +59,7 @@ grow_horizontal = 0
 grow_vertical = 2
 text = "End Turn (Space)"
 
-[node name="DeckCount" type="Label" parent="."]
+[node name="DeckCount" type="Label" parent="." unique_id=987710419]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
@@ -71,32 +71,44 @@ offset_bottom = -24.0
 grow_vertical = 0
 text = "Deck: 0"
 
-[node name="DiscardCount" type="Label" parent="."]
+[node name="DiscardCount" type="Label" parent="." unique_id=484081958]
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -160.0
+offset_left = -260.0
 offset_top = -56.0
-offset_right = -24.0
+offset_right = -124.0
 offset_bottom = -24.0
 grow_horizontal = 0
 grow_vertical = 0
-horizontal_alignment = 2
 text = "Discard: 0"
+horizontal_alignment = 2
 
-[node name="HandUI" parent="." instance=ExtResource("4_hand_ui")]
+[node name="EnergyOrb" parent="." unique_id=615644285 instance=ExtResource("6_energy_orb")]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -104.0
+offset_top = -96.0
+offset_right = -32.0
+offset_bottom = -24.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="HandUI" parent="." unique_id=1988631046 instance=ExtResource("4_hand_ui")]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = 0.0
 offset_top = -200.0
-offset_right = 0.0
 offset_bottom = -200.0
 grow_horizontal = 2
 grow_vertical = 0

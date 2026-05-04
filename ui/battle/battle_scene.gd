@@ -11,6 +11,7 @@ const DEFEND: CardData = preload("res://content/cards/defend.tres")
 @onready var _hand_ui: HandUI = $HandUI
 @onready var _deck_count_label: Label = $DeckCount
 @onready var _discard_count_label: Label = $DiscardCount
+@onready var _energy_orb: EnergyOrb = $EnergyOrb
 
 var _state: BattleState
 var _enemy: Character
@@ -30,6 +31,7 @@ func _ready() -> void:
 	_enemy_view.bind(_enemy, _controller.events)
 
 	_hand_ui.bind(_state, _player_view, [_enemy_view] as Array[CharacterView])
+	_energy_orb.bind(_state)
 
 	_hand_subscription = _controller.events.subscribe(HandChangedEvent, _on_hand_changed, 0)
 	_end_turn_button.pressed.connect(_on_end_turn_pressed)
